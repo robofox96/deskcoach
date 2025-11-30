@@ -1,0 +1,24 @@
+# DeskCoach M1 Dependencies (macOS-first)
+# IMPORTANT: Python 3.11 or 3.12 required (MediaPipe doesn't support 3.13 yet)
+# If you have Python 3.13, install Python 3.12 and recreate venv:
+#   brew install python@3.12
+#   python3.12 -m venv venv
+#   source venv/bin/activate
+#   pip install -r requirements.txt
+
+# Pose estimation (requires Python <= 3.12)
+mediapipe>=0.10.0
+
+# Computer vision
+opencv-python>=4.8.0
+
+# Numerical operations
+numpy>=1.24.0
+
+# macOS notifications (M1 - minimal)
+pync>=2.0.0
+
+# UI (M1 - Streamlit)
+streamlit>=1.30.0
+pandas>=2.0.0
+streamlit-autorefresh>=0.0.1

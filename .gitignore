@@ -1,0 +1,87 @@
+macOS
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+Python
+
+pycache/
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+*.pyd
+*.pkl
+*.egg-info/
+.eggs/
+.dist/
+build/
+dist/
+*.spec
+pip-wheel-metadata/
+.venv/
+venv/
+env/
+ENV/
+.idea/
+.vscode/
+
+Virtualenv & tools
+
+.python-version
+.poetry/
+.hatch/
+.mypy_cache/
+.pytest_cache/
+.cache/
+.ipynb_checkpoints/
+
+Logs & runtime
+
+logs/
+*.log
+*.pid
+*.lock
+
+Local storage (privacy)
+
+storage/*
+!storage/.keep
+# Specifically ignore IPC and process files
+storage/status.json
+storage/calibration_status.json
+storage/deskcoach.pid
+storage/service.json
+storage/calibration.lock
+storage/deskcoach.log
+
+UI / Streamlit
+
+.streamlit/secrets.toml
+.streamlit/state.json
+
+Packaging artifacts
+
+*.dmg
+*.pkg
+*.app
+*.icns
+
+Coverage / reports
+
+.coverage
+htmlcov/
+coverage.xml
+
+OS / misc
+
+Thumbs.db
+ehthumbs.db
+Icon?
+.Spotlight-V100
+.Trashes
+
+Windsurf / indexing overrides (optional)
+
+.codeiumignore
