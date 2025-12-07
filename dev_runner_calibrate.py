@@ -11,8 +11,11 @@ import os
 import argparse
 import sys
 
+from core.platform import is_macos
+
 # Set environment variable for macOS camera permission handling
-os.environ['OPENCV_AVFOUNDATION_SKIP_AUTH'] = '1'
+if is_macos():
+    os.environ['OPENCV_AVFOUNDATION_SKIP_AUTH'] = '1'
 
 from core import PoseLoop, CalibrationRoutine, CalibrationStorage
 from core.calibration_status import CalibrationProgressCallback

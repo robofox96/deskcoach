@@ -382,7 +382,7 @@ if login_status['available']:
     
     st.caption(f"App path: {login_status['app_path']}")
 else:
-    st.info("ℹ️ Login Item control only available when running as .app bundle")
+    st.info("ℹ️ Login Item control only available when running the DeskCoach macOS app bundle")
 
 st.divider()
 

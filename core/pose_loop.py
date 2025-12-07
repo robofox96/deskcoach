@@ -10,6 +10,7 @@ import threading
 from typing import Optional, Dict, Any, Callable
 import cv2
 import mediapipe as mp
+from .platform import is_macos
 from .metrics import (
     MetricsCalculator, 
     EMASmoothing, 
@@ -224,12 +225,16 @@ class PoseLoop:
             # On macOS, OpenCV needs camera permission
             # Set environment variable to skip auth in thread (must be done in main)
             import os
-            os.environ.setdefault('OPENCV_AVFOUNDATION_SKIP_AUTH', '1')
+            if is_macos():
+                os.environ.setdefault('OPENCV_AVFOUNDATION_SKIP_AUTH', '1')
             
             self.cap = cv2.VideoCapture(self.camera_index)
             if not self.cap.isOpened():
-                print("ERROR: Camera not accessible. Please grant camera permission:")
-                print("  System Settings → Privacy & Security → Camera → Terminal (or your IDE)")
+                if is_macos():
+                    print("ERROR: Camera not accessible. Please grant camera permission:")
+                    print("  System Settings → Privacy & Security → Camera → Terminal (or your IDE)")
+                else:
+                    print("ERROR: Camera not accessible. Check that no other application is using it and that OS camera permissions are granted.")
                 return False
             
             # Set camera properties from performance config

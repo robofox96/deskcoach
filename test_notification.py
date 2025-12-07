@@ -7,11 +7,16 @@ Usage:
 """
 
 from core import NotificationEngine
+from core.platform import is_macos
 
 def main():
     print("Testing DeskCoach notifications...")
     print()
-    
+
+    if not is_macos():
+        print("Notification tests are currently implemented for macOS only.")
+        return
+
     engine = NotificationEngine()
     
     # Test 1: Simple notification

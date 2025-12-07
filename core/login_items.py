@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 from typing import Tuple
 
+from .platform import is_macos
 
 def get_app_path() -> Path:
     """
@@ -20,6 +21,9 @@ def get_app_path() -> Path:
     Returns:
         Path to .app bundle, or None if not running as app
     """
+    if not is_macos():
+        return None
+
     if getattr(sys, 'frozen', False):
         # Running as PyInstaller bundle
         # sys.executable is DeskCoach.app/Contents/MacOS/entry_launcher
@@ -38,6 +42,9 @@ def is_login_item() -> Tuple[bool, str]:
     Returns:
         Tuple of (is_enabled, message)
     """
+    if not is_macos():
+        return False, "Login Items only available on macOS"
+
     app_path = get_app_path()
     
     if app_path is None:
@@ -81,6 +88,9 @@ def add_login_item() -> Tuple[bool, str]:
     Returns:
         Tuple of (success, message)
     """
+    if not is_macos():
+        return False, "Login Items only available on macOS"
+
     app_path = get_app_path()
     
     if app_path is None:
@@ -125,6 +135,9 @@ def remove_login_item() -> Tuple[bool, str]:
     Returns:
         Tuple of (success, message)
     """
+    if not is_macos():
+        return False, "Login Items only available on macOS"
+
     app_path = get_app_path()
     
     if app_path is None:

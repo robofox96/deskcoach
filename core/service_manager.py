@@ -16,6 +16,13 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 
 
+if hasattr(signal, "SIGKILL"):
+    _TERM_SIGNAL = signal.SIGTERM
+    _KILL_SIGNAL = signal.SIGKILL
+else:
+    _TERM_SIGNAL = signal.SIGTERM
+    _KILL_SIGNAL = signal.SIGTERM
+
 class ServiceManager:
     """
     Manages the background monitoring service (dev_runner.py).
@@ -134,22 +141,35 @@ class ServiceManager:
             return self.get_pid()
         
         # Build command line
-        frozen = getattr(sys, 'frozen', False)
+        frozen = getattr(sys, "frozen", False)
         if frozen:
-            # In a PyInstaller bundle, run the same executable with a service flag
+            # In a PyInstaller bundle, sys.executable points to the main launcher
             repo_root = Path(sys.executable).resolve().parent
         else:
+            # When running from source, repo_root is the project root
             repo_root = Path(__file__).parent.parent.resolve()
+
+        # Optional override for where storage/** files should live.
+        # When running inside the macOS .app bundle, entry_launcher sets this
+        # so that all storage is redirected under:
+        #   ~/Library/Application Support/DeskCoach/
+        storage_root_env = os.environ.get("DESKCOACH_STORAGE_ROOT")
+        storage_cwd = Path(storage_root_env).expanduser() if storage_root_env else repo_root
+
         python_exe = sys.executable
         dev_runner = repo_root / "dev_runner.py"
         
         if frozen:
+            # Inside the bundled app, re-invoke the same executable in service
+            # mode. The entry launcher will detect the --service flag and
+            # delegate to dev_runner.main(), so dev_runner does not need to
+            # exist as a real file on disk in the bundle.
             cmd = [
                 python_exe,
                 "--service",
                 "--camera", str(camera_index),
                 "--fps", str(target_fps),
-                "--preset", preset
+                "--preset", preset,
             ]
         else:
             if not dev_runner.exists():
@@ -160,7 +180,7 @@ class ServiceManager:
                 str(dev_runner),
                 "--camera", str(camera_index),
                 "--fps", str(target_fps),
-                "--preset", preset
+                "--preset", preset,
             ]
         
         if diagnostics:
@@ -173,10 +193,12 @@ class ServiceManager:
             # Start subprocess (detached, logs to file)
             process = subprocess.Popen(
                 cmd,
-                cwd=str(repo_root),
+                # Use storage_cwd so that any relative storage/ paths in the
+                # background service land under the configured storage root.
+                cwd=str(storage_cwd),
                 stdout=log_handle,
                 stderr=subprocess.STDOUT,  # Merge stderr into stdout
-                start_new_session=True  # Detach from parent
+                start_new_session=True,  # Detach from parent
             )
             
             pid = process.pid
@@ -234,7 +256,7 @@ class ServiceManager:
             print(f"[SERVICE] Stopping service (PID: {pid})...")
             
             # Send SIGTERM for graceful shutdown
-            os.kill(pid, signal.SIGTERM)
+            os.kill(pid, _TERM_SIGNAL)
             
             # Wait for process to exit
             start_time = time.time()
@@ -251,7 +273,7 @@ class ServiceManager:
             # Timeout: force kill
             print(f"[SERVICE] Timeout, force killing...")
             try:
-                os.kill(pid, signal.SIGKILL)
+                os.kill(pid, _KILL_SIGNAL)
                 time.sleep(0.5)
             except OSError:
                 pass

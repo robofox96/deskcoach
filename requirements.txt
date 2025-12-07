@@ -16,7 +16,7 @@ opencv-python>=4.8.0
 numpy>=1.24.0
 
 # macOS notifications (M1 - minimal)
-pync>=2.0.0
+pync>=2.0.0; sys_platform == "darwin"
 
 # UI (M1 - Streamlit)
 streamlit>=1.30.0

@@ -11,7 +11,7 @@ import time
 import subprocess
 from typing import Optional, Callable
 from enum import Enum
-
+from .platform import is_macos
 
 class NotificationAction(Enum):
     """User actions on notifications."""
@@ -47,6 +47,9 @@ class NotificationEngine:
         Returns:
             True if DND is active, False otherwise
         """
+        if not is_macos():
+            return False
+        
         try:
             # Check DND status via defaults command
             # This reads the com.apple.notificationcenterui plist
@@ -82,6 +85,9 @@ class NotificationEngine:
             True if notification was posted, False if suppressed (e.g., DND)
         """
         self.action_callback = action_callback
+        
+        if not is_macos():
+            return False
         
         try:
             # Try using pync if available
@@ -130,6 +136,9 @@ class NotificationEngine:
         This is a fallback when pync is not available.
         Note: Interactive actions require terminal-notifier or similar.
         """
+        if not is_macos():
+            return False
+        
         try:
             # Simple notification via osascript
             script = f'display notification "{message}" with title "{title}"'
@@ -177,6 +186,9 @@ class NotificationEngine:
         Returns:
             True if posted successfully
         """
+        if not is_macos():
+            return False
+        
         try:
             cmd = [
                 "terminal-notifier",
