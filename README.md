@@ -201,6 +201,45 @@ For low-level debugging or headless environments:
 
 > For a step-by-step dev walkthrough, see `QUICKSTART.md`.
 
+### Packaging for Windows (Experimental)
+
+For local testing of a packaged Windows app (PyInstaller-based):
+
+1. **Create and populate a virtualenv (once):**
+
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+2. **Build the Windows executable (from repo root, in CMD/PowerShell):**
+
+   ```bat
+   packaging\windows\build_windows.bat
+   ```
+
+   This produces a folder like:
+
+   ```text
+   dist\DeskCoach\DeskCoach.exe
+   ```
+
+3. **Run the packaged app:**
+
+   ```text
+   dist\DeskCoach\DeskCoach.exe
+   ```
+
+   The launcher will:
+
+   - Create a storage directory under `%APPDATA%\DeskCoach` (metrics/config only).
+   - Start the background monitoring service.
+   - Open the Streamlit UI at `http://localhost:8501`.
+
+> Windows login items / autostart and native notification integrations are not
+> implemented in v1 and may behave differently than on macOS.
+
 ---
 
 ## Repository Layout
